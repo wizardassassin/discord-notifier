@@ -1,0 +1,25 @@
+{
+  "name": "discord-notifier",
+  "version": "1.0.0",
+  "description": "Sends a Discord webhook based on customizable system events.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wizardassassin/discord-notifier.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wizardassassin/discord-notifier/issues"
+  },
+  "homepage": "https://github.com/wizardassassin/discord-notifier#readme",
+  "dependencies": {
+    "discord.js": "^14.10.2",
+    "dotenv": "^16.0.3"
+  }
+}

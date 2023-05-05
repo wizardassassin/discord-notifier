@@ -4,7 +4,37 @@ Sends a Discord webhook based on customizable system events.
 
 # Getting Started
 
-Customizing the code requires knowledge in Node.js/JavaScript and discord.js.
+The code currently requires manual editing to add events.  
+The systemStatus works on linux systems with systemctl.  
+pm2 needs to be started with systemd for the program to detect a system shutdown event.
+
+Make sure to have Node.js and pm2 installed.
+
+Clone the repo
+
+```bash
+git clone https://github.com/wizardassassin/discord-notifier.git
+cd discord-notifier
+```
+
+Install the dependencies
+
+```bash
+npm install
+```
+
+Rename the .env.example to .env and modify corresponding variables
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Run the code
+
+```
+pm2 start ecosystem.config.cjs
+```
 
 # References
 

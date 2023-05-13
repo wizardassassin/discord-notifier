@@ -1,40 +1,29 @@
 import * as dotenv from "dotenv";
-import { EmbedBuilder, WebhookClient } from "discord.js";
-import systemStatus from "./systemStatus.js";
-import { mcStatus } from "./mcStatus.js";
+import { WebhookClient } from "discord.js";
+import { mcStatusQuery } from "./mcStatus.js";
+import { sendStarted, sendStopped } from "./webhookTemplates.js";
 
 dotenv.config();
 
 const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
 
-setInterval(() => mcStatus(webhookClient), 5000);
+const intervals = [
+    {
+        name: "Minecraft Status Query",
+        task: mcStatusQuery,
+        delay: 5000,
+        isRunning: false,
+        timer: null,
+    },
+];
 
 async function programExit(code) {
-    const exitStatus = await systemStatus();
-    const embed = new EmbedBuilder()
-        .setTitle("🛑 Discord Notifier has Stopped: " + String(code))
-        .setFields({
-            name: "System Status",
-            value: String(exitStatus),
-        })
-        .setTimestamp()
-        .setColor("DarkBlue");
-    const msg = await webhookClient.send({
-        embeds: [embed],
-    });
+    await sendStopped({ webhookClient, code });
 }
 
 async function programStart() {
-    const embed = new EmbedBuilder()
-        .setTitle("✅ Discord Notifier has Started")
-        .setTimestamp()
-        .setColor("DarkBlue");
-    const msg = await webhookClient.send({
-        embeds: [embed],
-    });
+    await sendStarted({ webhookClient, names: intervals.map((x) => x.name) });
 }
-
-await programStart();
 
 let sentExit = false;
 
@@ -51,3 +40,18 @@ process.on("SIGTERM", (code) => {
 });
 
 setInterval(() => {}, 1 << 30);
+
+for (const interval of intervals) {
+    interval.timer = setInterval(async () => {
+        if (interval.isRunning) return;
+        interval.isRunning = true;
+        try {
+            await interval.task(webhookClient);
+        } catch (error) {
+            console.error(error);
+        }
+        interval.isRunning = false;
+    }, interval.delay);
+}
+
+await programStart();

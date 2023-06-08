@@ -1,57 +1,66 @@
 import * as dotenv from "dotenv";
-import { WebhookClient } from "discord.js";
-import { mcStatusQuery } from "./mcStatus.js";
-import { sendStarted, sendStopped } from "./webhookTemplates.js";
+import assert from "assert/strict";
+import { WebhookWrapper, startEmbed, stopEmbed } from "./webhookTemplates.js";
+import { Server } from "./listener.js";
+import fs from "fs/promises";
 
 dotenv.config();
 
-const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
+const webhook = new WebhookWrapper(process.env.WEBHOOK_URL);
 
-const intervals = [
-    {
-        name: "Minecraft Status Query",
-        task: mcStatusQuery,
-        delay: 5000,
-        isRunning: false,
-        timer: null,
-    },
-];
+const server = new Server(process.env.LISTENER_IP, process.env.LISTENER_PORT, 1);
 
-async function programExit(code) {
-    await sendStopped({ webhookClient, code });
+const eventsFolder = "./events";
+
+const files = await fs.readdir(eventsFolder);
+
+for (const file of files) {
+    const filePath = `${eventsFolder}/${file}`;
+    try {
+        const callback = await import(filePath);
+        if (callback.disabled === true) continue;
+        const type = callback.type;
+        assert.ok(type === "MULTIPLE" || type === "SINGLE", "Invalid type property");
+        if (type === "SINGLE") {
+            assert.ok(typeof callback.id === "string", "Invalid id");
+            assert.ok(typeof callback.execute === "function", "Invalid function");
+            server.addListener(callback.id, (msg) => callback.execute({ webhook, msg }));
+            continue;
+        }
+        assert.ok(callback.eventList instanceof Array, "Invalid eventList");
+        assert.ok(
+            callback.eventList.every(
+                (x) => typeof x.id === "string" && typeof x.execute === "function"
+            ),
+            "Invalid eventList"
+        );
+        for (const { id, execute } of callback.eventList) {
+            server.addListener(id, (msg) => execute({ webhook, msg }));
+        }
+    } catch (error) {
+        console.error(error);
+        console.error("Error importing:", filePath);
+    }
 }
 
-async function programStart() {
-    await sendStarted({ webhookClient, names: intervals.map((x) => x.name) });
-}
+server.start();
+
+webhook.sendEmbed(startEmbed());
 
 let sentExit = false;
 
 process.on("SIGINT", (code) => {
     if (sentExit) return;
     sentExit = true;
-    programExit(code).then((x) => process.exit(x || 0));
+    stopEmbed(code)
+        .then((res) => webhook.sendEmbed(res))
+        .then((x) => process.exit(x || 0));
 });
 
 process.on("SIGTERM", (code) => {
     if (sentExit) return;
     sentExit = true;
-    programExit(code).then((x) => process.exit(x || 0));
+    stopEmbed(code)
+        .then((res) => webhook.sendEmbed(res))
+        .then((x) => process.exit(x || 0));
 });
-
-setInterval(() => {}, 1 << 30);
-
-for (const interval of intervals) {
-    interval.timer = setInterval(async () => {
-        if (interval.isRunning) return;
-        interval.isRunning = true;
-        try {
-            await interval.task(webhookClient);
-        } catch (error) {
-            console.error(error);
-        }
-        interval.isRunning = false;
-    }, interval.delay);
-}
-
-await programStart();

@@ -1,36 +1,41 @@
 import { EmbedBuilder, WebhookClient } from "discord.js";
-import { getStatusSystemd } from "./systemStatus.js";
+import { getSystemStatus } from "./systemStatus.js";
 
-/**
- *
- * @param {{webhookClient: WebhookClient; names: string[]}} param0
- */
-export async function sendStarted({ webhookClient, names }) {
-    const embed = new EmbedBuilder()
-        .setTitle("✅ Discord Notifier has Started")
-        .setFields({ name: "Cron Listeners", value: names.join("\n") })
-        .setTimestamp()
-        .setColor("DarkBlue");
-    const msg = await webhookClient.send({
-        embeds: [embed],
-    });
+export class WebhookWrapper {
+    #webhookClient;
+    /** @param {string} url */
+    constructor(url) {
+        this.#webhookClient = new WebhookClient({ url });
+    }
+
+    /** @param {EmbedBuilder} embed */
+    async sendEmbed(embed) {
+        console.log("SENDING");
+        try {
+            await this.#webhookClient.send({
+                embeds: [embed],
+            });
+        } catch (error) {
+            console.error(error);
+            console.error("Couldn't send webhook");
+        }
+    }
+
+    async;
 }
 
-/**
- *
- * @param {{webhookClient: WebhookClient, code: NodeJS.Signals}} param0
- */
-export async function sendStopped({ webhookClient, code }) {
-    const exitStatus = await getStatusSystemd();
-    const embed = new EmbedBuilder()
-        .setTitle("🛑 Discord Notifier has Stopped: " + String(code))
-        .setFields({
-            name: "System Status",
-            value: String(exitStatus),
-        })
-        .setTimestamp()
-        .setColor("DarkBlue");
-    const msg = await webhookClient.send({
-        embeds: [embed],
-    });
+export class EmbedWrapper {
+    static genericEmbed = (title) => new EmbedBuilder().setTitle(title).setTimestamp();
+    static systemEmbed = (title) => this.genericEmbed(title).setColor("DarkBlue");
+    static minecraftEmbed = (title) => this.genericEmbed(title).setColor("DarkGreen");
+    static errorEmbed = (title) => this.genericEmbed(title).setColor("Red");
 }
+
+export const startEmbed = () =>
+    EmbedWrapper.systemEmbed("✅ Discord Notifier has Started");
+
+export const stopEmbed = async (code) =>
+    EmbedWrapper.systemEmbed(`🛑 Discord Notifier has Stopped: ${code}`).setFields({
+        name: "System Status",
+        value: String(await getSystemStatus()),
+    });

@@ -37,7 +37,7 @@ export class Server {
 
     /** @param {net.Socket} socket  */
     #connectionListener(socket) {
-        console.log("Connected");
+        console.log("Connected", socket.remoteAddress);
         this.#sockets.add(socket);
 
         socket.on("data", (data) => {

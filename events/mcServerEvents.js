@@ -16,7 +16,7 @@ export const eventList = [
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
 async function serverStart({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.minecraftEmbed(msg);
     await webhook.sendEmbed(embed);
 }
 
@@ -25,7 +25,7 @@ async function serverStart({ webhook, msg }) {
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
 async function serverStop({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.minecraftEmbed(msg);
     await webhook.sendEmbed(embed);
 }
 
@@ -34,7 +34,7 @@ async function serverStop({ webhook, msg }) {
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
 async function playerJoin({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.minecraftEmbed(msg);
     await webhook.sendEmbed(embed);
 }
 
@@ -43,6 +43,6 @@ async function playerJoin({ webhook, msg }) {
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
 async function playerLeave({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.minecraftEmbed(msg);
     await webhook.sendEmbed(embed);
 }

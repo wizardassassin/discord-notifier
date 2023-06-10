@@ -5,16 +5,17 @@ export const disabled = false;
 export const type = "MULTIPLE";
 
 export const eventList = [
-    { id: "Template-1", execute: execute1 },
-    { id: "Template-2", execute: execute2 },
-    { id: "Template-3", execute: execute3 },
+    { id: "minecraft_start", execute: serverStart },
+    { id: "minecraft_stop", execute: serverStop },
+    { id: "minecraft_join", execute: playerJoin },
+    { id: "minecraft_leave", execute: playerLeave },
 ];
 
 /**
  *
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
-async function execute1({ webhook, msg }) {
+async function serverStart({ webhook, msg }) {
     const embed = EmbedWrapper.genericEmbed(msg);
     await webhook.sendEmbed(embed);
 }
@@ -23,7 +24,7 @@ async function execute1({ webhook, msg }) {
  *
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
-async function execute2({ webhook, msg }) {
+async function serverStop({ webhook, msg }) {
     const embed = EmbedWrapper.genericEmbed(msg);
     await webhook.sendEmbed(embed);
 }
@@ -32,7 +33,16 @@ async function execute2({ webhook, msg }) {
  *
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
-async function execute3({ webhook, msg }) {
+async function playerJoin({ webhook, msg }) {
+    const embed = EmbedWrapper.genericEmbed(msg);
+    await webhook.sendEmbed(embed);
+}
+
+/**
+ *
+ * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ */
+async function playerLeave({ webhook, msg }) {
     const embed = EmbedWrapper.genericEmbed(msg);
     await webhook.sendEmbed(embed);
 }

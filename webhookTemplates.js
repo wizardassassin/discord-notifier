@@ -10,7 +10,6 @@ export class WebhookWrapper {
 
     /** @param {EmbedBuilder} embed */
     async sendEmbed(embed) {
-        console.log("SENDING");
         try {
             await this.#webhookClient.send({
                 embeds: [embed],

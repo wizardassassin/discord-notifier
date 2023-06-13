@@ -25,10 +25,10 @@ export class WebhookWrapper {
 }
 
 export class EmbedWrapper {
-    static genericEmbed = (title) => new EmbedBuilder().setTitle(title).setTimestamp();
-    static systemEmbed = (title) => this.genericEmbed(title).setColor("DarkBlue");
-    static minecraftEmbed = (title) => this.genericEmbed(title).setColor("DarkGreen");
-    static errorEmbed = (title) => this.genericEmbed(title).setColor("Red");
+    static genericEmbed = () => new EmbedBuilder().setTimestamp();
+    static titleEmbed = (title) => this.genericEmbed().setTitle(title);
+    static systemEmbed = (title) => this.titleEmbed(title).setColor("DarkBlue");
+    static errorEmbed = (title) => this.titleEmbed(title).setColor("Red");
 }
 
 export const startEmbed = () =>

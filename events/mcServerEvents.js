@@ -21,10 +21,9 @@ const getEmbed = (title) => EmbedWrapper.titleEmbed(title).setColor("DarkGreen")
 
 /**
  *
- * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ * @param {{webhook: WebhookWrapper, msg: string[]}} data Message Data
  */
-async function serverStart({ webhook, msg }) {
-    const [rawVersion, motd, maxPlayers] = msg.split("\n");
+async function serverStart({ webhook, msg: [rawVersion, motd, maxPlayers] }) {
     const sep = rawVersion.indexOf(" ");
     assert.ok(sep !== -1, "Couldn't find space seperator.");
     const mcVersion = rawVersion.slice(sep + 1);
@@ -39,7 +38,7 @@ async function serverStart({ webhook, msg }) {
 
 /**
  *
- * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ * @param {{webhook: WebhookWrapper, msg: string[]}} data Message Data
  */
 async function serverStop({ webhook, msg }) {
     const embed = getPlayerEmbed("🛑 Minecraft Server has Stopped");
@@ -48,10 +47,10 @@ async function serverStop({ webhook, msg }) {
 
 /**
  *
- * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ * @param {{webhook: WebhookWrapper, msg: string[]}} data Message Data
  */
 async function playerJoin({ webhook, msg }) {
-    const embed = getEmbed().setDescription(msg);
+    const embed = getEmbed().setDescription(msg.join("\n"));
     await webhook.sendEmbed(embed);
 }
 
@@ -60,6 +59,6 @@ async function playerJoin({ webhook, msg }) {
  * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
  */
 async function playerLeave({ webhook, msg }) {
-    const embed = getEmbed().setDescription(msg);
+    const embed = getEmbed().setDescription(msg.join("\n"));
     await webhook.sendEmbed(embed);
 }

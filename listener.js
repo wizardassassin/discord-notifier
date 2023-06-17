@@ -42,14 +42,9 @@ export class Server {
 
         socket.on("data", (data) => {
             const dataStr = data.toString().trim();
-            const sep = data.indexOf(" ");
-            if (sep === -1) {
-                socket.destroy();
-                console.error("Couldn't find seperator");
-                return;
-            }
-            const id = dataStr.slice(0, sep);
-            const msg = dataStr.slice(sep + 1);
+            const dataArr = dataStr.split("\n");
+            const id = dataArr[0];
+            const msg = dataArr.slice(1);
             if (!this.#listeners.has(id)) {
                 socket.destroy();
                 console.error("Couldn't find corresponding id");

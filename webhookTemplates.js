@@ -1,4 +1,9 @@
-import { EmbedBuilder, WebhookClient } from "discord.js";
+import {
+    EmbedBuilder,
+    MessagePayload,
+    WebhookClient,
+    WebhookMessageCreateOptions,
+} from "discord.js";
 import { getSystemStatus } from "./systemStatus.js";
 
 export class WebhookWrapper {
@@ -8,19 +13,22 @@ export class WebhookWrapper {
         this.#webhookClient = new WebhookClient({ url });
     }
 
-    /** @param {EmbedBuilder} embed */
-    async sendEmbed(embed) {
+    /** @param {string | MessagePayload | WebhookMessageCreateOptions} data */
+    async sendGeneric(data) {
         try {
-            await this.#webhookClient.send({
-                embeds: [embed],
-            });
+            this.#webhookClient.send(data);
         } catch (error) {
             console.error(error);
             console.error("Couldn't send webhook");
         }
     }
 
-    async;
+    /** @param {EmbedBuilder} embed */
+    async sendEmbed(embed) {
+        await this.sendGeneric({
+            embeds: [embed],
+        });
+    }
 }
 
 export class EmbedWrapper {

@@ -12,27 +12,27 @@ export const eventList = [
 
 /**
  *
- * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ * @param {{webhook: WebhookWrapper, msg: string[]}} data Message Data
  */
 async function execute1({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.titleEmbed(msg.join("\n"));
     await webhook.sendEmbed(embed);
 }
 
 /**
  *
- * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ * @param {{webhook: WebhookWrapper, msg: string[]}} data Message Data
  */
 async function execute2({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.titleEmbed(msg.join("\n"));
     await webhook.sendEmbed(embed);
 }
 
 /**
  *
- * @param {{webhook: WebhookWrapper, msg: string}} data Message Data
+ * @param {{webhook: WebhookWrapper, msg: string[]}} data Message Data
  */
 async function execute3({ webhook, msg }) {
-    const embed = EmbedWrapper.genericEmbed(msg);
+    const embed = EmbedWrapper.titleEmbed(msg.join("\n"));
     await webhook.sendEmbed(embed);
 }

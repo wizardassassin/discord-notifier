@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/wizardassassin/discord-notifier#readme",
   "dependencies": {
-    "discord.js": "^14.10.2",
-    "dotenv": "^16.0.3"
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.7"
   }
 }
